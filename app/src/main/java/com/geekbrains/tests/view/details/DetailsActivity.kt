@@ -12,11 +12,12 @@ import java.util.*
 
 class DetailsActivity : AppCompatActivity(), ViewDetailsContract {
 
-    private val presenter: PresenterDetailsContract = DetailsPresenter(this)
+    private val presenter: PresenterDetailsContract by lazy { DetailsPresenter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
+        presenter.onAttach(this)
         setUI()
     }
 
@@ -28,6 +29,10 @@ class DetailsActivity : AppCompatActivity(), ViewDetailsContract {
         incrementButton.setOnClickListener { presenter.onIncrement() }
     }
 
+    override fun init() {
+        setUI()
+    }
+
     override fun setCount(count: Int) {
         setCountText(count)
     }
@@ -37,6 +42,10 @@ class DetailsActivity : AppCompatActivity(), ViewDetailsContract {
             String.format(Locale.getDefault(), getString(R.string.results_count), count)
     }
 
+    override fun onDestroy() {
+        presenter.onDetach()
+        super.onDestroy()
+    }
     companion object {
 
         const val TOTAL_COUNT_EXTRA = "TOTAL_COUNT_EXTRA"
